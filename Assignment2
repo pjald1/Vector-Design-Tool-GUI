@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Scanner;
 
-public class assign2GUI extends JPanel implements ActionListener, MouseListener, MouseMotionListener{
+public class assign2GUI extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener{
 
     private JButton btnLoad;
     private JButton btnSave;
@@ -25,18 +25,19 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
     private JTextArea information;
     private Image drawnimg, undoCount;
     private final UndoStack<Image> undoStack = new UndoStack<>(90);
-    private Graphics2D g;
+    Graphics2D g;
+    Graphics2D gc;
 
     private JTextArea areDisplay;
 
     private int x1,y1,x2,y2,buttonpressed;
 
-     public assign2GUI(){
+    public assign2GUI(){
 
-        JFrame frame = new JFrame("Paint");
-        frame.setSize(1000,500);
-        frame.setBackground(Color.WHITE);
-        frame.getContentPane().add(this);
+        JFrame Paint = new JFrame("Paint");
+        Paint.setSize(1000,500);
+        Paint.setBackground(Color.WHITE);
+        Paint.getContentPane().add(this);
 
 
         btnLoad = new JButton("Load");
@@ -68,8 +69,8 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         areDisplay = CreateTextArea();
 
         addMouseListener(this);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Paint.setVisible(true);
+        Paint.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     private JTextArea CreateTextArea() {
@@ -79,6 +80,25 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         display.setFont(new Font("Arial", Font.CENTER_BASELINE, 10));
 
         return display;
+    }
+
+
+    public void checkImagecoordinates()
+    {
+        if (x1 > x2)
+        {
+            int z = 0;
+            z = x1;
+            x1 = x2;
+            x2 = z;
+        }
+        if (y1 > y2)
+        {
+            int z = 0;
+            z = y1;
+            y1 = y2;
+            y2 = z;
+        }
     }
 
     public void paintComponent(Graphics g)
@@ -95,13 +115,11 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
 
         g2.drawImage(drawnimg, 0, 0, null);
-        check();
+        checkImagecoordinates();
     }
 
 
-    Graphics2D gc;
-
-    public void draw(){
+    public void drawImage(){
         Graphics2D g = (Graphics2D) getGraphics();
         int w = x2 - x1;
         if (w < 0)
@@ -113,47 +131,29 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
         if (buttonpressed == 1)
         {
-            check();
+            checkImagecoordinates();
             gc.drawLine(x1, y1, x1, y1);
             repaint();
         }
 
         else if (buttonpressed == 2){
-            check();
+            checkImagecoordinates();
             gc.drawLine(x1 ,y1, x2,y2);
             repaint();
         }
 
         else if (buttonpressed == 3){
-            check();
+            checkImagecoordinates();
             gc.drawRect(x1,y1,w,h);
             repaint();
         }
 
         else if (buttonpressed == 4){
-            check();
+            checkImagecoordinates();
             gc.drawOval(x1,y1,w,h);
             repaint();
         }
 
-    }
-
-    public void check()
-    {
-        if (x1 > x2)
-        {
-            int z = 0;
-            z = x1;
-            x1 = x2;
-            x2 = z;
-        }
-        if (y1 > y2)
-        {
-            int z = 0;
-            z = y1;
-            y1 = y2;
-            y2 = z;
-        }
     }
 
     private void setImage(Image img){
@@ -254,7 +254,7 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
         x2 = e.getX();
         y2 = e.getY();
-        draw();
+        drawImage();
     }
 
     @Override
@@ -275,5 +275,11 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
     @Override
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+    if(e.getPreciseWheelRotation() < 0){
+    }
     }
 }
