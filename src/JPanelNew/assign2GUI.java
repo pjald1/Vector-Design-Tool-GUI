@@ -137,7 +137,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
 
         else if (buttonpressed == 2){
-            checkImagecoordinates();
             gc.drawLine(x1 ,y1, x2,y2);
             repaint();
         }
