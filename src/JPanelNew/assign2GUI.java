@@ -9,6 +9,10 @@ import java.util.Scanner;
 
 public class assign2GUI extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener{
 
+    final JPanel NorthPanel = new JPanel();
+
+
+    private JButton btnColour;
     private JButton btnLoad;
     private JButton btnSave;
     private JButton btnPlot;
@@ -17,6 +21,9 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
     private JButton btnEllipse;
     private JButton btnPolygon;
     private JButton btnUndo;
+
+
+
 
     private JFileChooser vecfile;
     private String file;
@@ -39,7 +46,8 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         Paint.setBackground(Color.WHITE);
         Paint.getContentPane().add(this);
 
-
+        btnColour = new JButton("Colours");
+        btnColour.addActionListener(this);
         btnLoad = new JButton("Load");
         btnLoad.addActionListener(this);
         btnSave = new JButton("Save");
@@ -64,6 +72,7 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         this.add(btnRectangle);
         this.add(btnEllipse);
         this.add(btnPolygon);
+        this.add(btnColour);
         this.add(btnUndo);
 
         areDisplay = CreateTextArea();
@@ -268,6 +277,9 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        x2 = e.getX();
+        y2 = e.getY();
+        repaint();
 
     }
 
