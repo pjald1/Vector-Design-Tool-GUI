@@ -126,6 +126,7 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             gc.setColor(Color.BLACK);
         }
 
+        gc.drawLine(x1 ,y1, x2,y2);
         g2.drawImage(drawnimg, 0, 0, null);
         checkImagecoordinates();
     }
