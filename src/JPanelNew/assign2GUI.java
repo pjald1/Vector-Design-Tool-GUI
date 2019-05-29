@@ -38,11 +38,13 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
     private JTextArea areDisplay;
 
     private int x1,y1,x2,y2,buttonpressed;
+    private int width = 1000;
+    private int height = 500;
 
     public assign2GUI(){
 
         JFrame Paint = new JFrame("Paint");
-        Paint.setSize(1000,500);
+        Paint.setSize(width,height);
         Paint.setBackground(Color.WHITE);
         Paint.getContentPane().add(this);
 
@@ -112,6 +114,7 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     public void paintComponent(Graphics g)
     {
+
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         if (drawnimg == null)
@@ -129,7 +132,30 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
 
     public void drawImage(){
+
         Graphics2D g = (Graphics2D) getGraphics();
+
+        int[] xPoint = {x1, x2};
+        int[] yPoint = {y1, y2};
+
+//        if (mousePressed();) {
+//            xPoint = new int[] { x1 * width, (x1 + 1) * width, (int) ((0.5 + x1) * width) };
+//            yPoint = new int[] { (y1 + 1) * height, (y1 + 1) * height, y1 * height };
+//        } else if (heading.equals(DOWN)) {
+//            xPoint = new int[] { x1 * width, (x1 + 1) * width, (int) ((0.5 + x1) * width) };
+//            yPoint = new int[] { y1 * height, y1 * height, (y1 + 1) * height };
+//        } else if (heading.equals(LEFT)) {
+//            xPoint = new int[] { (x1 + 1) * width, (x1 + 1) * width, x1 * width };
+//            yPoint = new int[] { y1 * height, (y1 + 1) * height, (int) ((0.5 + y1) * height) };
+//        } else if (heading.equals(RIGHT)) {
+//            xPoint = new int[] { x1 * width, x1 * width, (x1 + 1) * width };
+//            yPoint = new int[] { y1 * height, (y1 + 1) * height, (int) ((0.5 + y1) * height) };
+//        }
+
+
+
+
+
         int w = x2 - x1;
         if (w < 0)
             w = w * (-1);
@@ -159,6 +185,10 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         else if (buttonpressed == 4){
             checkImagecoordinates();
             gc.drawOval(x1,y1,w,h);
+            repaint();
+        }
+        else if (buttonpressed == 5){
+            gc.drawPolygon(new Polygon(xPoint, yPoint, 5));
             repaint();
         }
 
@@ -214,6 +244,16 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
         if (src.equals("Ellipse")) {
             buttonpressed = 4;
+        }
+        if (src.equals("Polygon")){
+            buttonpressed = 5;
+        }
+
+        if (e.getActionCommand().equals("Colours"))
+        {
+            Color bgColour = JColorChooser.showDialog(this, "Choose Colour", getBackground());
+            if (bgColour != null)
+                gc.setColor(bgColour);
         }
 
         if (src.equals("Load")) {
