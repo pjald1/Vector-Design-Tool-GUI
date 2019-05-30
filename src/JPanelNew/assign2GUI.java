@@ -5,6 +5,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferUShort;
 import java.io.*;
 import java.util.Scanner;
 
@@ -22,9 +23,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
     private JButton btnEllipse;
     private JButton btnPolygon;
     private JButton btnUndo;
-
-
-
 
     private JFileChooser vecfile;
     private String file;
@@ -154,9 +152,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 //        }
 
 
-
-
-
         int w = x2 - x1;
         if (w < 0)
             w = w * (-1);
@@ -250,6 +245,29 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
     }
 
+    public void drawRectangles(String[] line){
+        double dvx = Double.parseDouble((line[1])) * (WIDTH);
+        int vx = (int)dvx;
+        double dvy = Double.parseDouble((line[2])) * HEIGHT;
+        int vy = (int)dvy;
+        double dvx1 = Double.parseDouble((line[3])) * WIDTH;
+        double dvy1 = Double.parseDouble((line[4])) * HEIGHT;
+
+        double w = dvx1 - dvx;
+        int vw = (int)w;
+        if (vw < 0)
+            vw = vw * (-1);
+
+        double h = dvy1 - dvy;
+        int vh = (int)h;
+        if (vh < 0)
+            vh = vh * (-1);
+
+        gc.drawRect(vx, vy, vw, vh);
+
+        repaint();
+    }
+
     public void drawTheShapes(String shapeDraw, String[] line){
 
         if(shapeDraw.equals("PLOT")){
@@ -277,26 +295,34 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
 
         if(shapeDraw.equals("RECTANGLE")){
-            double dvx = Double.parseDouble((line[1])) * (WIDTH);
-            int vx = (int)dvx;
-            double dvy = Double.parseDouble((line[2])) * HEIGHT;
-            int vy = (int)dvy;
-            double dvx1 = Double.parseDouble((line[3])) * WIDTH;
-            double dvy1 = Double.parseDouble((line[4])) * HEIGHT;
-
-            double w = dvx1 - dvx;
-            int vw = (int)w;
-            if (vw < 0)
-                vw = vw * (-1);
-
-            double h = dvy1 - dvy;
-            int vh = (int)h;
-            if (vh < 0)
-                vh = vh * (-1);
-
-            gc.drawRect(vx, vy, vw, vh);
-
-            repaint();
+//            if (shapeDraw.equals("FILL")){
+//                double dvx = Double.parseDouble((line[1])) * (WIDTH);
+//                int vx = (int)dvx;
+//                double dvy = Double.parseDouble((line[2])) * HEIGHT;
+//                int vy = (int)dvy;
+//                double dvx1 = Double.parseDouble((line[3])) * WIDTH;
+//                double dvy1 = Double.parseDouble((line[4])) * HEIGHT;
+//
+//                double w = dvx1 - dvx;
+//                int vw = (int)w;
+//                if (vw < 0)
+//                    vw = vw * (-1);
+//
+//                double h = dvy1 - dvy;
+//                int vh = (int)h;
+//                if (vh < 0)
+//                    vh = vh * (-1);
+//
+//            String fillColour = (line[1]);
+//            if (fillColour.equals("#000000")){
+//                gc.setColor(Color.BLACK);
+//                gc.drawRect(vx,vy,vw,vh);
+//                gc.fillRect(vx,vy,vw,vh);
+//                repaint();
+//            }
+//
+//            }
+                drawRectangles(line);
         }
 
         if(shapeDraw.equals("ELLIPSE")){
@@ -320,19 +346,66 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             gc.drawOval(vx,vy,vw,vh);
             repaint();
         }
-
+//
 //        if(shapeDraw.equals("POLYGON")){
 //
-//            double dvx = Double.parseDouble(line[1])*WIDTH;
-//            int vx = (int)dvx;
-//            double dvy = Double.parseDouble(line[2])*HEIGHT;
-//            int vy = (int)dvy;
+////            double dvx = Double.parseDouble(line[1])*WIDTH;
+////            int vx = (int)dvx;
+////            double dvy = Double.parseDouble(line[2])*HEIGHT;
+////            int vy = (int)dvy;
 //
-//            for (int i = 0; i <= line.length; i++){
-//                double dvx = Double.parseDouble(line[i]);
+//            //int lineLength = line.length;
 //
+//            for (int i = ; i < line.length; i = line[])
+//            {
+//                System.out.print("y: " + i);
 //            }
 //
+////            String one = line[1];
+////            String two = line[2];
+////            String three = line[3];
+////            String four = line[4];
+////            String five = line[5];
+////            String six = line[6];
+////            String seven = line[7];
+//
+////            System.out.print(shapeDraw + " " + one + " " +two + " " + three + " " + four+ " " + five +" "+ six +"\n " );
+//
+////            System.out.print(" " + lineLength + "\n");
+//
+//
+//        }
+
+        if (shapeDraw.equals("PEN")){
+            String penColour = (line[1]);
+            if (penColour.equals("#000000")){
+                gc.setColor(Color.BLACK);
+            }
+            if (penColour.equals("#FFFFFF")){
+                gc.setColor(Color.WHITE);
+            }
+            if (penColour.equals("#0000FF")){
+                gc.setColor(Color.BLUE);
+            }
+            if (penColour.equals("#808080")){
+                gc.setColor(Color.GRAY);
+            }
+            if (penColour.equals("#FF0000")){
+                gc.setColor(Color.RED);
+            }
+            if (penColour.equals("#008000")){
+                gc.setColor(Color.GREEN);
+            }
+            if (penColour.equals("#FFFF00")){
+                gc.setColor(Color.YELLOW);
+            }
+        }
+
+//        if (shapeDraw.equals("FILL")){
+//            String fillColour = (line[1]);
+//            if (fillColour.equals("#000000")){
+//
+//            }
 //        }
 
     }
@@ -340,8 +413,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
     @Override
     public void actionPerformed(ActionEvent e) {
         super.removeMouseMotionListener(this);
-
-        int returnValue;
 
         Object src = e.getActionCommand();
 
@@ -432,7 +503,7 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-    if(e.getPreciseWheelRotation() < 0){
-    }
+        if(e.getPreciseWheelRotation() < 0){
+        }
     }
 }
