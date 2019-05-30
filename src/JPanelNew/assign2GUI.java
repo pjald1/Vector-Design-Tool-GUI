@@ -1,6 +1,7 @@
 package JPanelNew;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -38,13 +39,13 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
     private JTextArea areDisplay;
 
     private int x1,y1,x2,y2,buttonpressed;
-    private int width = 1000;
-    private int height = 500;
+    int WIDTH = 1000;
+    int HEIGHT = 500;
 
     public assign2GUI(){
 
         JFrame Paint = new JFrame("Paint");
-        Paint.setSize(width,height);
+        Paint.setSize(WIDTH,HEIGHT);
         Paint.setBackground(Color.WHITE);
         Paint.getContentPane().add(this);
 
@@ -126,7 +127,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             gc.setColor(Color.BLACK);
         }
 
-        gc.drawLine(x1 ,y1, x2,y2);
         g2.drawImage(drawnimg, 0, 0, null);
         checkImagecoordinates();
     }
@@ -136,8 +136,8 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
         Graphics2D g = (Graphics2D) getGraphics();
 
-        int[] xPoint = {x1, x2};
-        int[] yPoint = {y1, y2};
+        //int[] xPoint = {x1, x2};
+        //int[] yPoint = {y1, y2};
 
 //        if (mousePressed();) {
 //            xPoint = new int[] { x1 * width, (x1 + 1) * width, (int) ((0.5 + x1) * width) };
@@ -188,10 +188,10 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             gc.drawOval(x1,y1,w,h);
             repaint();
         }
-        else if (buttonpressed == 5){
-            gc.drawPolygon(new Polygon(xPoint, yPoint, 5));
-            repaint();
-        }
+//        else if (buttonpressed == 5){
+//            gc.drawPolygon(new Polygon(xPoint, yPoint, 5));
+//            repaint();
+//        }
 
     }
 
@@ -221,6 +221,120 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     private void savetoStack(Image img){
         undoStack.push(copyImage(img));
+    }
+
+
+    public void vecFileChoose() {
+
+        JFileChooser chooseFile = new JFileChooser();
+        FileNameExtensionFilter vecFilter = new FileNameExtensionFilter(
+                ".vec", "vec");
+        chooseFile.setFileFilter(vecFilter);
+
+        int file = chooseFile.showOpenDialog(null);
+
+        if (file == JFileChooser.APPROVE_OPTION) {
+            File input = new File(String.valueOf(chooseFile.getSelectedFile()));
+            try {
+                Scanner scan = new Scanner(input);
+                while (scan.hasNext()) {
+                    String[] line = scan.nextLine().split(" ");
+
+                    String shapeDraw = line[0];
+                    drawTheShapes(shapeDraw, line);
+
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    public void drawTheShapes(String shapeDraw, String[] line){
+
+        if(shapeDraw.equals("PLOT")){
+            double dvx = Double.parseDouble(line[1]) * WIDTH;
+            int vx = (int)dvx;
+            double dvy = Double.parseDouble(line[2])*HEIGHT;
+            int vy = (int)dvy;
+
+            gc.drawLine(vx,vy,vx,vy);
+            repaint();
+        }
+
+        if(shapeDraw.equals("LINE")){
+            double dvx = Double.parseDouble(line[1]) * WIDTH;
+            int vx = (int)dvx;
+            double dvy = Double.parseDouble(line[2])*HEIGHT;
+            int vy = (int)dvy;
+            double dvx1 = Double.parseDouble(line[3])*WIDTH;
+            int vx1 = (int)dvx1;
+            double dvy1 = Double.parseDouble(line[4])*HEIGHT;
+            int vy1 = (int)dvy1;
+            gc.drawLine(vx,vy,vx1,vy1);
+            repaint();
+        }
+
+
+        if(shapeDraw.equals("RECTANGLE")){
+            double dvx = Double.parseDouble((line[1])) * (WIDTH);
+            int vx = (int)dvx;
+            double dvy = Double.parseDouble((line[2])) * HEIGHT;
+            int vy = (int)dvy;
+            double dvx1 = Double.parseDouble((line[3])) * WIDTH;
+            double dvy1 = Double.parseDouble((line[4])) * HEIGHT;
+
+            double w = dvx1 - dvx;
+            int vw = (int)w;
+            if (vw < 0)
+                vw = vw * (-1);
+
+            double h = dvy1 - dvy;
+            int vh = (int)h;
+            if (vh < 0)
+                vh = vh * (-1);
+
+            gc.drawRect(vx, vy, vw, vh);
+
+            repaint();
+        }
+
+        if(shapeDraw.equals("ELLIPSE")){
+            double dvx = Double.parseDouble(line[1])*WIDTH;
+            int vx = (int)dvx;
+            double dvy = Double.parseDouble(line[2])*HEIGHT;
+            int vy = (int)dvy;
+            double dvx1 = Double.parseDouble(line[3])*WIDTH;
+            double dvy1 = Double.parseDouble(line[4])*HEIGHT;
+
+            double w = dvx1 - dvx;
+            int vw = (int)w;
+            if (vw < 0)
+                vw = vw * (-1);
+
+            double h = dvy1 - dvy;
+            int vh = (int)h;
+            if (vh < 0)
+                vh = vh * (-1);
+
+            gc.drawOval(vx,vy,vw,vh);
+            repaint();
+        }
+
+//        if(shapeDraw.equals("POLYGON")){
+//
+//            double dvx = Double.parseDouble(line[1])*WIDTH;
+//            int vx = (int)dvx;
+//            double dvy = Double.parseDouble(line[2])*HEIGHT;
+//            int vy = (int)dvy;
+//
+//            for (int i = 0; i <= line.length; i++){
+//                double dvx = Double.parseDouble(line[i]);
+//
+//            }
+//
+//        }
+
     }
 
     @Override
@@ -258,20 +372,7 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
 
         if (src.equals("Load")) {
-            vecfile = new JFileChooser();
-            returnValue = vecfile.showOpenDialog(null);
-
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                Chosenfile = vecfile.getSelectedFile();
-                file = Chosenfile.getPath();
-
-                Scanner sc = new Scanner(System.in);
-                String a =sc.next();
-                String b = sc.next();
-                System.out.println("First Word:" + a);
-                System.out.println("Second Words:" +b);
-                sc.close();
-            }
+            vecFileChoose();
         }
 
         if (src.equals("Undo")){
