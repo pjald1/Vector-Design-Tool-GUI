@@ -4,9 +4,12 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferUShort;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class assign2GUI extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener{
@@ -245,7 +248,12 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
     }
 
-    public void drawRectangles(String[] line){
+    Color pencolour = Color.BLACK;
+    Color fillcolour = Color.WHITE;
+
+    public void drawRectangles(String[] line, Color pencolour, Color fillcolour){
+
+
         double dvx = Double.parseDouble((line[1])) * (WIDTH);
         int vx = (int)dvx;
         double dvy = Double.parseDouble((line[2])) * HEIGHT;
@@ -262,10 +270,22 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         int vh = (int)h;
         if (vh < 0)
             vh = vh * (-1);
-
+        gc.setColor(fillcolour);
+        gc.fillRect(vx, vy, vw, vh);
+        gc.setColor(pencolour);
         gc.drawRect(vx, vy, vw, vh);
-
         repaint();
+    }
+
+    private boolean fillon = false;
+
+
+
+    public static Color hex2Rgb(String colorStr) {
+        return new Color(
+                Integer.valueOf( colorStr.substring( 1, 3 ), 16 ),
+                Integer.valueOf( colorStr.substring( 3, 5 ), 16 ),
+                Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) );
     }
 
     public void drawTheShapes(String shapeDraw, String[] line){
@@ -295,34 +315,8 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
 
         if(shapeDraw.equals("RECTANGLE")){
-//            if (shapeDraw.equals("FILL")){
-//                double dvx = Double.parseDouble((line[1])) * (WIDTH);
-//                int vx = (int)dvx;
-//                double dvy = Double.parseDouble((line[2])) * HEIGHT;
-//                int vy = (int)dvy;
-//                double dvx1 = Double.parseDouble((line[3])) * WIDTH;
-//                double dvy1 = Double.parseDouble((line[4])) * HEIGHT;
-//
-//                double w = dvx1 - dvx;
-//                int vw = (int)w;
-//                if (vw < 0)
-//                    vw = vw * (-1);
-//
-//                double h = dvy1 - dvy;
-//                int vh = (int)h;
-//                if (vh < 0)
-//                    vh = vh * (-1);
-//
-//            String fillColour = (line[1]);
-//            if (fillColour.equals("#000000")){
-//                gc.setColor(Color.BLACK);
-//                gc.drawRect(vx,vy,vw,vh);
-//                gc.fillRect(vx,vy,vw,vh);
-//                repaint();
-//            }
-//
-//            }
-                drawRectangles(line);
+
+            drawRectangles(line, pencolour, fillcolour);
         }
 
         if(shapeDraw.equals("ELLIPSE")){
@@ -343,70 +337,85 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             if (vh < 0)
                 vh = vh * (-1);
 
+            gc.setColor(fillcolour);
+            gc.fillOval(vx,vy,vw,vh);
+            gc.setColor(pencolour);
             gc.drawOval(vx,vy,vw,vh);
             repaint();
         }
-//
-//        if(shapeDraw.equals("POLYGON")){
-//
-////            double dvx = Double.parseDouble(line[1])*WIDTH;
-////            int vx = (int)dvx;
-////            double dvy = Double.parseDouble(line[2])*HEIGHT;
-////            int vy = (int)dvy;
-//
-//            //int lineLength = line.length;
-//
-//            for (int i = ; i < line.length; i = line[])
-//            {
-//                System.out.print("y: " + i);
-//            }
-//
-////            String one = line[1];
-////            String two = line[2];
-////            String three = line[3];
-////            String four = line[4];
-////            String five = line[5];
-////            String six = line[6];
-////            String seven = line[7];
-//
-////            System.out.print(shapeDraw + " " + one + " " +two + " " + three + " " + four+ " " + five +" "+ six +"\n " );
-//
-////            System.out.print(" " + lineLength + "\n");
-//
-//
-//        }
 
-        if (shapeDraw.equals("PEN")){
-            String penColour = (line[1]);
-            if (penColour.equals("#000000")){
-                gc.setColor(Color.BLACK);
+        if(shapeDraw.equals("POLYGON")){
+
+            ArrayList<String> xpoints = new ArrayList<>();
+            ArrayList<String> ypoints = new ArrayList<>();
+
+            for (int i =1 ; i < line.length; i = i+2)
+            {
+                xpoints.add(line[i]);
             }
-            if (penColour.equals("#FFFFFF")){
-                gc.setColor(Color.WHITE);
+
+            for (int i =2; i < line.length; i = i+ 2)
+            {
+                ypoints.add(line[i]);
             }
-            if (penColour.equals("#0000FF")){
-                gc.setColor(Color.BLUE);
+
+//            for (String w:xpoints){System.out.println(w);}
+
+//            for (String p:ypoints){System.out.println(p);}
+
+
+            double[]doubleXpoints = new double[xpoints.size()];
+            for (int i = 0; i < xpoints.size(); i++){
+                doubleXpoints[i] = Double.parseDouble(xpoints.get(i)) * WIDTH;
             }
-            if (penColour.equals("#808080")){
-                gc.setColor(Color.GRAY);
+
+//            for (Double o:doubleXpoints)System.out.println(o);
+
+            double[]doubleYpoints = new double[ypoints.size()];
+            for (int i = 0; i < ypoints.size(); i++){
+                doubleYpoints[i] = Double.parseDouble(ypoints.get(i)) * HEIGHT;
             }
-            if (penColour.equals("#FF0000")){
-                gc.setColor(Color.RED);
+
+//            for (Double u:doubleYpoints)System.out.println(u);
+
+            GeneralPath polygon =
+                    new GeneralPath(GeneralPath.WIND_EVEN_ODD, doubleXpoints.length);
+
+            polygon.moveTo (doubleXpoints[0], doubleYpoints[0]);
+            for (int i = 1; i < doubleXpoints.length; i++){
+                polygon.lineTo(doubleXpoints[i],doubleYpoints[i]);
             }
-            if (penColour.equals("#008000")){
-                gc.setColor(Color.GREEN);
-            }
-            if (penColour.equals("#FFFF00")){
-                gc.setColor(Color.YELLOW);
-            }
+
+
+
+            polygon.closePath();
+            gc.setColor(fillcolour);
+            gc.fill(polygon);
+            gc.setColor(pencolour);
+            gc.draw(polygon);
+            repaint();
         }
 
-//        if (shapeDraw.equals("FILL")){
-//            String fillColour = (line[1]);
-//            if (fillColour.equals("#000000")){
-//
-//            }
-//        }
+        if (shapeDraw.equals("PEN")){
+
+            String penColour = (line[1]);
+            Color c = hex2Rgb(penColour);
+            gc.setColor(c);
+            pencolour = c;
+
+        }
+
+
+        if (shapeDraw.equals("FILL")){
+
+            String penColour = (line[1]);
+            if (line[1].equals("OFF") != true) {
+                Color c = hex2Rgb(penColour);
+                gc.setColor(c);
+                fillcolour = c;
+            }
+
+        }
 
     }
 
