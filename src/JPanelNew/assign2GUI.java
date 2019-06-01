@@ -6,15 +6,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferUShort;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
-public class assign2GUI extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener{
-
-    final JPanel NorthPanel = new JPanel();
+public class assign2GUI extends JPanel implements ActionListener, MouseListener, MouseMotionListener{
 
 
     private JButton btnColour;
@@ -30,18 +26,16 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
     private JFileChooser vecfile;
     private String file;
     private File Chosenfile;
-    private JTextField Paneltext;
-    private JTextArea information;
     private Image drawnimg, undoCount;
     private final UndoStack<Image> undoStack = new UndoStack<>(90);
-    Graphics2D g;
     Graphics2D gc;
-
-    private JTextArea areDisplay;
 
     private int x1,y1,x2,y2,buttonpressed;
     int WIDTH = 1000;
     int HEIGHT = 500;
+    Color pencolour = Color.BLACK;
+    Color fillcolour = Color.WHITE;
+
 
     public assign2GUI(){
 
@@ -79,22 +73,10 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         this.add(btnColour);
         this.add(btnUndo);
 
-        areDisplay = CreateTextArea();
-
         addMouseListener(this);
         Paint.setVisible(true);
         Paint.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
-    private JTextArea CreateTextArea() {
-        JTextArea display = new JTextArea();
-        display.setEditable(false);
-        display.setLineWrap(true);
-        display.setFont(new Font("Arial", Font.CENTER_BASELINE, 10));
-
-        return display;
-    }
-
 
     public void checkImagecoordinates()
     {
@@ -135,7 +117,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     public void drawImage(){
 
-        Graphics2D g = (Graphics2D) getGraphics();
 
         //int[] xPoint = {x1, x2};
         //int[] yPoint = {y1, y2};
@@ -187,17 +168,17 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             repaint();
         }
 //        else if (buttonpressed == 5){
-//            gc.drawPolygon(new Polygon(xPoint, yPoint, 5));
+//            gc.drawPolygon(new Polygon(xPoints, yPoints, 3));
 //            repaint();
 //        }
 
     }
 
     private void setImage(Image img){
-        g = (Graphics2D) img.getGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        gc = (Graphics2D) img.getGraphics();
+        gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setPaint(Color.black);
+        gc.setPaint(Color.black);
         this.drawnimg = img;
         repaint();
     }
@@ -221,7 +202,10 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         undoStack.push(copyImage(img));
     }
 
-
+    /** This function will choose the ved files and will filter out all
+     * the files that are not in vec format
+     *
+     */
     public void vecFileChoose() {
 
         JFileChooser chooseFile = new JFileChooser();
@@ -248,8 +232,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
     }
 
-    Color pencolour = Color.BLACK;
-    Color fillcolour = Color.WHITE;
 
     public void drawRectangles(String[] line, Color pencolour, Color fillcolour){
 
@@ -276,10 +258,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         gc.drawRect(vx, vy, vw, vh);
         repaint();
     }
-
-    private boolean fillon = false;
-
-
 
     public static Color hex2Rgb(String colorStr) {
         return new Color(
@@ -359,24 +337,15 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
                 ypoints.add(line[i]);
             }
 
-//            for (String w:xpoints){System.out.println(w);}
-
-//            for (String p:ypoints){System.out.println(p);}
-
-
             double[]doubleXpoints = new double[xpoints.size()];
             for (int i = 0; i < xpoints.size(); i++){
                 doubleXpoints[i] = Double.parseDouble(xpoints.get(i)) * WIDTH;
             }
 
-//            for (Double o:doubleXpoints)System.out.println(o);
-
             double[]doubleYpoints = new double[ypoints.size()];
             for (int i = 0; i < ypoints.size(); i++){
                 doubleYpoints[i] = Double.parseDouble(ypoints.get(i)) * HEIGHT;
             }
-
-//            for (Double u:doubleYpoints)System.out.println(u);
 
             GeneralPath polygon =
                     new GeneralPath(GeneralPath.WIND_EVEN_ODD, doubleXpoints.length);
@@ -385,8 +354,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             for (int i = 1; i < doubleXpoints.length; i++){
                 polygon.lineTo(doubleXpoints[i],doubleYpoints[i]);
             }
-
-
 
             polygon.closePath();
             gc.setColor(fillcolour);
@@ -458,9 +425,8 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         if (src.equals("Undo")){
             undo();
         }
+
     }
-
-
 
     public static void main (String[] args){
         new assign2GUI();
@@ -473,10 +439,10 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     @Override
     public void mousePressed(MouseEvent e) {
-
         savetoStack(drawnimg);
         x1 = e.getX();
         y1 = e.getY();
+
     }
 
     @Override
@@ -510,9 +476,4 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     }
 
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        if(e.getPreciseWheelRotation() < 0){
-        }
-    }
 }
