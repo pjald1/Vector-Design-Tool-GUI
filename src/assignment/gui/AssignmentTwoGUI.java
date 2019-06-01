@@ -1,4 +1,4 @@
-package JPanelNew;
+package assignment.gui;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -6,44 +6,34 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferUShort;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
-public class assign2GUI extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener{
+/**
+ * Contains all the methods which constructs the frame of the gui and sets up
+ * its functionality
+ */
+public class AssignmentTwoGUI extends JPanel implements ActionListener, MouseListener, MouseMotionListener{
 
-    final JPanel NorthPanel = new JPanel();
+    private JButton btnColour, btnLoad, btnSave, btnPlot, btnLine;
+    private JButton btnRectangle, btnEllipse, btnPolygon, btnUndo;
 
-
-    private JButton btnColour;
-    private JButton btnLoad;
-    private JButton btnSave;
-    private JButton btnPlot;
-    private JButton btnLine;
-    private JButton btnRectangle;
-    private JButton btnEllipse;
-    private JButton btnPolygon;
-    private JButton btnUndo;
-
-    private JFileChooser vecfile;
-    private String file;
-    private File Chosenfile;
-    private JTextField Paneltext;
-    private JTextArea information;
-    private Image drawnimg, undoCount;
+    private Image drawnImg, undoCount;
     private final UndoStack<Image> undoStack = new UndoStack<>(90);
-    Graphics2D g;
     Graphics2D gc;
 
-    private JTextArea areDisplay;
-
-    private int x1,y1,x2,y2,buttonpressed;
+    private int x1,y1,x2,y2, buttonPressed;
     int WIDTH = 1000;
     int HEIGHT = 500;
+    Color penColour = Color.BLACK;
+    Color fillColour = Color.WHITE;
 
-    public assign2GUI(){
+    /**
+     * The frame of the GUI is constructed, the buttons are added with actionlisteners,
+     * and mouselistener is added
+     */
+    public AssignmentTwoGUI(){
 
         JFrame Paint = new JFrame("Paint");
         Paint.setSize(WIDTH,HEIGHT);
@@ -79,24 +69,16 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         this.add(btnColour);
         this.add(btnUndo);
 
-        areDisplay = CreateTextArea();
-
         addMouseListener(this);
         Paint.setVisible(true);
         Paint.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private JTextArea CreateTextArea() {
-        JTextArea display = new JTextArea();
-        display.setEditable(false);
-        display.setLineWrap(true);
-        display.setFont(new Font("Arial", Font.CENTER_BASELINE, 10));
-
-        return display;
-    }
-
-
-    public void checkImagecoordinates()
+    /**
+     * Ensures that rectangles and ellipse are drawn correctly by making sure that the x and y coordinates
+     * are not inverted
+     */
+    public void checkCoordinates()
     {
         if (x1 > x2)
         {
@@ -114,32 +96,34 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
     }
 
+    /** The paint component is one of the swing components
+     * @param g the graphics which will be used to draw the images
+     */
     public void paintComponent(Graphics g)
     {
-
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        if (drawnimg == null)
+        if (drawnImg == null)
         {
-            int w = this.getWidth();                        // width
-            int h = this.getHeight();                       // height
-            drawnimg = (this.createImage(w, h));
-            gc = (Graphics2D) drawnimg.getGraphics();
+            int w = this.getWidth();
+            int h = this.getHeight();
+            drawnImg = (this.createImage(w, h));
+            gc = (Graphics2D) drawnImg.getGraphics();
             gc.setColor(Color.BLACK);
         }
-
-        g2.drawImage(drawnimg, 0, 0, null);
-        checkImagecoordinates();
+        g2.drawImage(drawnImg, 0, 0, null);
+        checkCoordinates();
     }
 
 
-    public void drawImage(){
-
-        Graphics2D g = (Graphics2D) getGraphics();
-
+    /**
+     * This method draws the different type of shapes, which is plot, line,
+     * rectangle and ellipse based on the button that is pressed
+     *
+     */
+    public void drawShape(){
         //int[] xPoint = {x1, x2};
         //int[] yPoint = {y1, y2};
-
 //        if (mousePressed();) {
 //            xPoint = new int[] { x1 * width, (x1 + 1) * width, (int) ((0.5 + x1) * width) };
 //            yPoint = new int[] { (y1 + 1) * height, (y1 + 1) * height, y1 * height };
@@ -153,8 +137,6 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 //            xPoint = new int[] { x1 * width, x1 * width, (x1 + 1) * width };
 //            yPoint = new int[] { y1 * height, (y1 + 1) * height, (int) ((0.5 + y1) * height) };
 //        }
-
-
         int w = x2 - x1;
         if (w < 0)
             w = w * (-1);
@@ -163,45 +145,51 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         if (h < 0)
             h = h * (-1);
 
-        if (buttonpressed == 1)
+        if (buttonPressed == 1)
         {
-            checkImagecoordinates();
+            checkCoordinates();
             gc.drawLine(x1, y1, x1, y1);
             repaint();
         }
 
-        else if (buttonpressed == 2){
+        else if (buttonPressed == 2){
             gc.drawLine(x1 ,y1, x2,y2);
             repaint();
         }
 
-        else if (buttonpressed == 3){
-            checkImagecoordinates();
+        else if (buttonPressed == 3){
+            checkCoordinates();
             gc.drawRect(x1,y1,w,h);
             repaint();
         }
 
-        else if (buttonpressed == 4){
-            checkImagecoordinates();
+        else if (buttonPressed == 4){
+            checkCoordinates();
             gc.drawOval(x1,y1,w,h);
             repaint();
         }
-//        else if (buttonpressed == 5){
-//            gc.drawPolygon(new Polygon(xPoint, yPoint, 5));
+//        else if (buttonPressed == 5){
+//            gc.drawPolygon(new Polygon(xPoints, yPoints, 3));
 //            repaint();
 //        }
-
     }
 
+    /** Sets the latest shape that has been drawn to an image
+     * @param img the latest drawn shape is set to this variable
+     */
     private void setImage(Image img){
-        g = (Graphics2D) img.getGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        gc = (Graphics2D) img.getGraphics();
+        gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setPaint(Color.black);
-        this.drawnimg = img;
+        gc.setPaint(Color.black);
+        this.drawnImg = img;
         repaint();
     }
 
+    /**
+     * As long as the size of the stack is greater than 0, the latest drawn image is removed
+     * when this function is called
+     */
     public void undo(){
         if (undoStack.size() > 0){
             undoCount = undoStack.pop();
@@ -209,37 +197,47 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
     }
 
+    /** Takes a copy of the recently drawn shape
+     * @param img the variable where the most recent drawn shape is copied into
+     * @return the copy of the recently drawn image
+     */
     private BufferedImage copyImage(Image img){
-        BufferedImage copyOfImage = new BufferedImage(getSize().width,
+        BufferedImage copyofImage = new BufferedImage(getSize().width,
                 getSize().height, BufferedImage.TYPE_INT_RGB);
-        Graphics g = copyOfImage.createGraphics();
+        Graphics g = copyofImage.createGraphics();
         g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
-        return copyOfImage;
+
+        return copyofImage;
     }
 
-    private void savetoStack(Image img){
+    /**Adds the undone image to the stack
+     * @param img the latest drawn image is stored to this variable
+     */
+    private void saveStack(Image img){
         undoStack.push(copyImage(img));
     }
 
-
-    public void vecFileChoose() {
-
-        JFileChooser chooseFile = new JFileChooser();
+    /** This function will choose and load the vec files and will filter out all
+     * the files that are not in .vec format
+     *
+     */
+    public void choosingFile() {
+        JFileChooser chosenFile = new JFileChooser();
         FileNameExtensionFilter vecFilter = new FileNameExtensionFilter(
                 ".vec", "vec");
-        chooseFile.setFileFilter(vecFilter);
+        chosenFile.setFileFilter(vecFilter);
 
-        int file = chooseFile.showOpenDialog(null);
+        int file = chosenFile.showOpenDialog(null);
 
         if (file == JFileChooser.APPROVE_OPTION) {
-            File input = new File(String.valueOf(chooseFile.getSelectedFile()));
+            File input = new File(String.valueOf(chosenFile.getSelectedFile()));
             try {
                 Scanner scan = new Scanner(input);
                 while (scan.hasNext()) {
                     String[] line = scan.nextLine().split(" ");
 
                     String shapeDraw = line[0];
-                    drawTheShapes(shapeDraw, line);
+                    loadShapes(shapeDraw, line);
 
                 }
             } catch (FileNotFoundException e) {
@@ -248,12 +246,14 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
     }
 
-    Color pencolour = Color.BLACK;
-    Color fillcolour = Color.WHITE;
-
-    public void drawRectangles(String[] line, Color pencolour, Color fillcolour){
-
-
+    /** The rectangles from the files are scanned then drawn with the pen and
+     * fill colour desired
+     * @param line an array which contains the coordinates of the rectangles
+     *             which are used to draw them
+     * @param penColour the colour of the pen desired
+     * @param fillColour the colour of the fill desired
+     */
+    public void drawRectangles(String[] line, Color penColour, Color fillColour){
         double dvx = Double.parseDouble((line[1])) * (WIDTH);
         int vx = (int)dvx;
         double dvy = Double.parseDouble((line[2])) * HEIGHT;
@@ -270,17 +270,19 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         int vh = (int)h;
         if (vh < 0)
             vh = vh * (-1);
-        gc.setColor(fillcolour);
+
+        gc.setColor(fillColour);
         gc.fillRect(vx, vy, vw, vh);
-        gc.setColor(pencolour);
+        gc.setColor(penColour);
         gc.drawRect(vx, vy, vw, vh);
         repaint();
     }
 
-    private boolean fillon = false;
-
-
-
+    /** Reads the colours that are in hexadecimal format and converts them
+     * to RGB colour model
+     * @param colorStr the colour in hexadecimal format
+     * @return the color that has been read
+     */
     public static Color hex2Rgb(String colorStr) {
         return new Color(
                 Integer.valueOf( colorStr.substring( 1, 3 ), 16 ),
@@ -288,8 +290,12 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
                 Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) );
     }
 
-    public void drawTheShapes(String shapeDraw, String[] line){
-
+    /** Scans the contents of the files, draws the shapes and sets the pen and
+     * fill colours based on the hexadecimal format that has been read
+     * @param shapeDraw the string which specifies which shape to draw
+     * @param line an array which contains all the coordinates required to draw each shape
+     */
+    public void loadShapes(String shapeDraw, String[] line){
         if(shapeDraw.equals("PLOT")){
             double dvx = Double.parseDouble(line[1]) * WIDTH;
             int vx = (int)dvx;
@@ -309,14 +315,13 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             int vx1 = (int)dvx1;
             double dvy1 = Double.parseDouble(line[4])*HEIGHT;
             int vy1 = (int)dvy1;
+
             gc.drawLine(vx,vy,vx1,vy1);
             repaint();
         }
 
-
         if(shapeDraw.equals("RECTANGLE")){
-
-            drawRectangles(line, pencolour, fillcolour);
+            drawRectangles(line, penColour, fillColour);
         }
 
         if(shapeDraw.equals("ELLIPSE")){
@@ -337,15 +342,14 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
             if (vh < 0)
                 vh = vh * (-1);
 
-            gc.setColor(fillcolour);
+            gc.setColor(fillColour);
             gc.fillOval(vx,vy,vw,vh);
-            gc.setColor(pencolour);
+            gc.setColor(penColour);
             gc.drawOval(vx,vy,vw,vh);
             repaint();
         }
 
         if(shapeDraw.equals("POLYGON")){
-
             ArrayList<String> xpoints = new ArrayList<>();
             ArrayList<String> ypoints = new ArrayList<>();
 
@@ -359,24 +363,15 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
                 ypoints.add(line[i]);
             }
 
-//            for (String w:xpoints){System.out.println(w);}
-
-//            for (String p:ypoints){System.out.println(p);}
-
-
             double[]doubleXpoints = new double[xpoints.size()];
             for (int i = 0; i < xpoints.size(); i++){
                 doubleXpoints[i] = Double.parseDouble(xpoints.get(i)) * WIDTH;
             }
 
-//            for (Double o:doubleXpoints)System.out.println(o);
-
             double[]doubleYpoints = new double[ypoints.size()];
             for (int i = 0; i < ypoints.size(); i++){
                 doubleYpoints[i] = Double.parseDouble(ypoints.get(i)) * HEIGHT;
             }
-
-//            for (Double u:doubleYpoints)System.out.println(u);
 
             GeneralPath polygon =
                     new GeneralPath(GeneralPath.WIND_EVEN_ODD, doubleXpoints.length);
@@ -386,39 +381,36 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
                 polygon.lineTo(doubleXpoints[i],doubleYpoints[i]);
             }
 
-
-
             polygon.closePath();
-            gc.setColor(fillcolour);
+            gc.setColor(fillColour);
             gc.fill(polygon);
-            gc.setColor(pencolour);
+            gc.setColor(penColour);
             gc.draw(polygon);
             repaint();
         }
 
         if (shapeDraw.equals("PEN")){
-
             String penColour = (line[1]);
             Color c = hex2Rgb(penColour);
             gc.setColor(c);
-            pencolour = c;
+            this.penColour = c;
 
         }
 
-
         if (shapeDraw.equals("FILL")){
-
             String penColour = (line[1]);
             if (line[1].equals("OFF") != true) {
                 Color c = hex2Rgb(penColour);
                 gc.setColor(c);
-                fillcolour = c;
+                fillColour = c;
             }
-
         }
-
     }
 
+    /** The Actionlistener implemented method
+     * @param e an ActionEvent which detects which button is pressed
+     *          and performs their respective functionality
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         super.removeMouseMotionListener(this);
@@ -426,22 +418,22 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         Object src = e.getActionCommand();
 
         if (src.equals("Plot")) {
-            buttonpressed = 1;
+            buttonPressed = 1;
         }
 
         if (src.equals("Line")) {
-            buttonpressed = 2;
+            buttonPressed = 2;
         }
 
         if (src.equals("Rectangle")) {
-            buttonpressed = 3;
+            buttonPressed = 3;
         }
 
         if (src.equals("Ellipse")) {
-            buttonpressed = 4;
+            buttonPressed = 4;
         }
         if (src.equals("Polygon")){
-            buttonpressed = 5;
+            buttonPressed = 5;
         }
 
         if (e.getActionCommand().equals("Colours"))
@@ -452,18 +444,20 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
         }
 
         if (src.equals("Load")) {
-            vecFileChoose();
+            choosingFile();
         }
 
         if (src.equals("Undo")){
             undo();
         }
+
     }
 
-
-
+    /** Main method where the gui is called
+     * @param args contains the supplied command-line arguments as an array of string
+     */
     public static void main (String[] args){
-        new assign2GUI();
+        new AssignmentTwoGUI();
     }
 
     @Override
@@ -471,20 +465,26 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     }
 
+    /** Gets the required values when the mouse is pressed
+     * @param e is used to get the x1 and y1 coordinates for the shapes
+     */
     @Override
     public void mousePressed(MouseEvent e) {
-
-        savetoStack(drawnimg);
+        saveStack(drawnImg);
         x1 = e.getX();
         y1 = e.getY();
+
     }
 
+    /** Gets the required values when the mouse is released and draws the shapes
+     * @param e is used to get the x2 and y2 coordinates for the shapes
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
 
         x2 = e.getX();
         y2 = e.getY();
-        drawImage();
+        drawShape();
     }
 
     @Override
@@ -497,6 +497,10 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     }
 
+    /** Implemented method of mousemotionlistener and is used to help get
+     * the coordinates for the shapes when the mouse is dragged
+     * @param e gets the x2 and y2 values
+     */
     @Override
     public void mouseDragged(MouseEvent e) {
         x2 = e.getX();
@@ -510,9 +514,4 @@ public class assign2GUI extends JPanel implements ActionListener, MouseListener,
 
     }
 
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        if(e.getPreciseWheelRotation() < 0){
-        }
-    }
 }
