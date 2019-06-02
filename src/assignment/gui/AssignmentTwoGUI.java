@@ -350,35 +350,35 @@ public class AssignmentTwoGUI extends JPanel implements ActionListener, MouseLis
         }
 
         if(shapeDraw.equals("POLYGON")){
-            ArrayList<String> xpoints = new ArrayList<>();
-            ArrayList<String> ypoints = new ArrayList<>();
+            ArrayList<String> xPoints = new ArrayList<>();
+            ArrayList<String> yPoints = new ArrayList<>();
 
             for (int i =1 ; i < line.length; i = i+2)
             {
-                xpoints.add(line[i]);
+                xPoints.add(line[i]);
             }
 
             for (int i =2; i < line.length; i = i+ 2)
             {
-                ypoints.add(line[i]);
+                yPoints.add(line[i]);
             }
 
-            double[]doubleXpoints = new double[xpoints.size()];
-            for (int i = 0; i < xpoints.size(); i++){
-                doubleXpoints[i] = Double.parseDouble(xpoints.get(i)) * WIDTH;
+            double[]dxPoints = new double[xPoints.size()];
+            for (int i = 0; i < xPoints.size(); i++){
+                dxPoints[i] = Double.parseDouble(xPoints.get(i)) * WIDTH;
             }
 
-            double[]doubleYpoints = new double[ypoints.size()];
-            for (int i = 0; i < ypoints.size(); i++){
-                doubleYpoints[i] = Double.parseDouble(ypoints.get(i)) * HEIGHT;
+            double[]dyPoints = new double[yPoints.size()];
+            for (int i = 0; i < yPoints.size(); i++){
+                dyPoints[i] = Double.parseDouble(yPoints.get(i)) * HEIGHT;
             }
 
             GeneralPath polygon =
-                    new GeneralPath(GeneralPath.WIND_EVEN_ODD, doubleXpoints.length);
+                    new GeneralPath(GeneralPath.WIND_EVEN_ODD, dxPoints.length);
 
-            polygon.moveTo (doubleXpoints[0], doubleYpoints[0]);
-            for (int i = 1; i < doubleXpoints.length; i++){
-                polygon.lineTo(doubleXpoints[i],doubleYpoints[i]);
+            polygon.moveTo (dxPoints[0], dyPoints[0]);
+            for (int i = 1; i < dxPoints.length; i++){
+                polygon.lineTo(dxPoints[i],dyPoints[i]);
             }
 
             polygon.closePath();
@@ -394,7 +394,6 @@ public class AssignmentTwoGUI extends JPanel implements ActionListener, MouseLis
             Color c = hex2Rgb(penColour);
             gc.setColor(c);
             this.penColour = c;
-
         }
 
         if (shapeDraw.equals("FILL")){
@@ -473,7 +472,6 @@ public class AssignmentTwoGUI extends JPanel implements ActionListener, MouseLis
         saveStack(drawnImg);
         x1 = e.getX();
         y1 = e.getY();
-
     }
 
     /** Gets the required values when the mouse is released and draws the shapes
@@ -481,7 +479,6 @@ public class AssignmentTwoGUI extends JPanel implements ActionListener, MouseLis
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-
         x2 = e.getX();
         y2 = e.getY();
         drawShape();
@@ -506,12 +503,10 @@ public class AssignmentTwoGUI extends JPanel implements ActionListener, MouseLis
         x2 = e.getX();
         y2 = e.getY();
         repaint();
-
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
     }
 
 }
