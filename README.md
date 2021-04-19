@@ -1,12 +1,4 @@
-# Assignment2
+# Vector Design Tool
 
-This is the repository for Assignment 2 by group 39.
-The packages assign2GUI, JFrameNew, JPanelUsed and TryingtoputinJFrame are marked as excluded because
-they are not needed for the program to run. They were what the team used for different tests with the gui
-and are not necessary.
+This project runs a GUI that allows users to draw shapes and load images onto a canvas using .VEC files. Shape options includes, squares, circles, lines, rectangle, load image, etc. Coded in Java programming.
 
-Luigi Jaldon(n10000381)
-
-Jericho Duggan(n9434437)
-
-Paolo Jaldon(n10025731)
